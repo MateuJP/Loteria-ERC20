@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import smart_contract from '../abis/loteria.json';
-import Web3 from 'web3';
+import Web3, { eth } from 'web3';
 import Swal from 'sweetalert2';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -141,6 +141,63 @@ class Tokens extends Component {
     }
   }
 
+  _compraTokens=async( _numTokens) => {
+    try{
+      console.log("Compra de Tokens en ejecución");
+      const web3 = window.web3;
+      const ethers = web3.utils.toWei(_numTokens, 'ether');
+      await this.state.contract.methods.compraTokens(_numTokens).send({
+        from : this.state.account,
+        value : ethers
+      })
+      Swal.fire({
+        icon: 'success',
+        title: 'Compra de Tokens RicuibCoins realizada',
+        width: 800,
+        padding : '3em',
+        text: `Has Comprado ${_numTokens} RicuibCoin/s por un valor de ${ethers / 10**18} ether/s`,
+        backdrop : `
+          rgba(15,238,168,0.2)
+          left top
+          no-repeat
+        `
+      });
+
+
+    }catch(err){
+      this.setState({errorMessage : err});
+    }finally{
+      this.setState({loading:false})
+    }
+  }
+
+  _devolverTokens = async(_numTokens) =>{
+    try{
+      console.log("Compra de Tokens en ejecución");
+      await this.state.contract.methods.devolverTokens(_numTokens).send({
+        from : this.state.account})
+      Swal.fire({
+        icon: 'success',
+        title: '¡Devolución de RicuibCoins realizada!',
+        width: 800,
+        padding : '3em',
+        text: `Has devuelto ${_numTokens} RicuibCoin/s`,
+        backdrop : `
+          rgba(15,238,168,0.2)
+          left top
+          no-repeat
+        `
+      });
+
+
+    }catch(err){
+      this.setState({errorMessage : err});
+    }finally{
+      this.setState({loading:false})
+    }
+
+  }
+
   render() {
     return (
       <div>
@@ -186,6 +243,38 @@ class Tokens extends Component {
                     </Col>
                   </Row>
                 </Container>
+                &nbsp;
+                <h3>Compra de tokens RicuibCoin</h3>
+                <form onSubmit={(event) =>{
+                  event.preventDefault();
+                  const cantidad = this._numTokens.value;
+                  this._compraTokens(cantidad);
+                }}>
+                  <input type='number' 
+                  className='form-control mb-1' 
+                  placeholder='Cantidad de RicuibCoins a Comprar' 
+                  ref={(input)=> this._numTokens = input}/>
+                  <input type='submit' 
+                  className='bbtn btn-block btn-primary btn-sm' 
+                  value="Comprar Tokens"/>
+                </form>
+                &nbsp;
+                <h3> Devolución de Tokens ERC20</h3>
+                <form onSubmit={(event) =>{
+                  event.preventDefault()
+                  const cantidad = this._numTokensDevolver.value;
+                  this._devolverTokens(cantidad);
+                }}>
+                  <input type='number' 
+                  className='form-control mb-1' 
+                  placeholder='Cantidad de RicuibCoins a Devolver' 
+                  ref={(input)=> this._numTokensDevolver = input}/>
+                  <input type='submit' 
+                  className='bbtn btn-block btn-warning btn-sm' 
+                  value="Devolver Tokens"/>
+                
+                </form>
+                
               </div>
             </main>
           </div>

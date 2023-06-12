@@ -13,7 +13,7 @@ const Navigation = ({ account }) => {
                 <Navbar.Collapse id="navbar navbar-dark bg-primary">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Tokens</Nav.Link>
-                        <Nav.Link as={Link} to="/loteria">Comprar Boletos</Nav.Link>
+                        <Nav.Link as={Link} to="/loteria">Loteria</Nav.Link>
                         <Nav.Link as={Link} to="/ganador">Ganador</Nav.Link>
 
 

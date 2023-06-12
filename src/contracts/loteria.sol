@@ -15,7 +15,7 @@ contract loteria is ERC20, Ownable {
     address public nft;
 
     // Constructor 
-    constructor() ERC20("Loteria", "JA"){
+    constructor() ERC20("RicuibCoins", "RAM"){
         _mint(address(this), 100000);
         nft = address(new mainERC721());
     }
@@ -53,6 +53,7 @@ contract loteria is ERC20, Ownable {
 
     // Registro de usuarios
     function registrar() internal {
+        require(usuario_contract[msg.sender]==address(0),'Ya estas Registrado');
         address addr_personal_contract = address(new boletosNFTs(msg.sender, address(this), nft));
         usuario_contract[msg.sender] = addr_personal_contract; 
     }
@@ -89,7 +90,7 @@ contract loteria is ERC20, Ownable {
         require(_numTokens > 0, "Necesitas devolver un numero de tokens mayor a 0");
         // El usuario debe acreditar tener los tokens que quiere devolver
         require(_numTokens <= balanceTokens(msg.sender), "No tienes los tokens que deseas devolver");
-        // El usuario transfiere los tokens al Smart Contract
+        // El usuario transfiere los tokens al Smart Contrac
         _transfer(msg.sender, address(this), _numTokens);
         // El Smart Contract envia los ethers al usuario
         payable(msg.sender).transfer(precioTokens(_numTokens));
