@@ -1,0 +1,30 @@
+.carousel-container {
+    width: 100vw; /* Ancho igual al ancho de la ventana */
+    height: 50vh; /* Altura igual a la altura de la ventana */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Evitar que el contenido desborde */
+  }
+  .carousel-item img {
+    width: 100vw; /* Ancho igual al ancho de la ventana */
+    height: 50vh; /* Altura igual a la altura de la ventana */
+    object-fit: cover;
+    size: 100%;
+  }
+  .cronometro-container{
+    width: 100vw; /* Ancho igual al ancho de la ventana */
+    height: 50vh; /* Altura igual a la altura de la ventana */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Evitar que el contenido desborde */
+
+  }
+
+  .carousel-control-prev-icon, .carousel-control-next-icon,.carousel-indicators {
+    filter: invert(108%);
+  }
+
+  
+  
+ 
+  

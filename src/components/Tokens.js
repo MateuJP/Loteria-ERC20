@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+
 import Navigation from './Navbar';
 import MyCarousel from './Carousel';
 import { Container } from 'react-bootstrap';
@@ -55,7 +56,6 @@ class Tokens extends Component {
       window.alert('¡El Smart Contract no se ha desplegado en la red!')
     }
   }
-
   constructor(props) {
     super(props)
     this.state = {
@@ -118,15 +118,17 @@ class Tokens extends Component {
 
   _balanceEthersSC=async()=>{
     try{
+      const BigNumber = require('bignumber.js');
       console.log('Balance de Ethers Smart Contract en ejecucion');
       const _balanceEthersSC=await this.state.contract.methods.balanceEthersSC().call();
-
+      console.log(`El SC tienen ${_balanceEthersSC} Ethers`)
+      let ethers = new BigNumber(_balanceEthersSC).div(10 ** 18);
       Swal.fire({
         icon: 'info',
         title: 'Balance de ethers del smart contract : ',
         width: 800,
         padding : '3em',
-        text: `${_balanceEthersSC} ethers`,
+        text: `${ethers} ethers`,
         backdrop : `
           rgba(15,238,168,0.2)
           left top
@@ -143,19 +145,21 @@ class Tokens extends Component {
 
   _compraTokens=async( _numTokens) => {
     try{
+      const web3 = window.web3
       console.log("Compra de Tokens en ejecución");
-      const web3 = window.web3;
-      const ethers = web3.utils.toWei(_numTokens, 'ether');
+      const ethers = await this.state.contract.methods.precioTokens(_numTokens).call();
+      const precioFinal=web3.utils.fromWei(ethers, 'wei');
+      console.log(`El precio es ${ethers} ethers`);
       await this.state.contract.methods.compraTokens(_numTokens).send({
         from : this.state.account,
-        value : ethers
+        value : precioFinal
       })
       Swal.fire({
         icon: 'success',
-        title: 'Compra de Tokens RicuibCoins realizada',
+        title: 'Compra de Tokens ChernoFortune realizada',
         width: 800,
         padding : '3em',
-        text: `Has Comprado ${_numTokens} RicuibCoin/s por un valor de ${ethers / 10**18} ether/s`,
+        text: `Has Comprado ${_numTokens} ChernoFortune/s por un valor de ${ethers / 10**18} ether/s`,
         backdrop : `
           rgba(15,238,168,0.2)
           left top
@@ -178,10 +182,10 @@ class Tokens extends Component {
         from : this.state.account})
       Swal.fire({
         icon: 'success',
-        title: '¡Devolución de RicuibCoins realizada!',
+        title: '¡Devolución de ChernoFortune realizada!',
         width: 800,
         padding : '3em',
-        text: `Has devuelto ${_numTokens} RicuibCoin/s`,
+        text: `Has devuelto ${_numTokens} ChernoFortune/s`,
         backdrop : `
           rgba(15,238,168,0.2)
           left top
@@ -244,7 +248,7 @@ class Tokens extends Component {
                   </Row>
                 </Container>
                 &nbsp;
-                <h3>Compra de tokens RicuibCoin</h3>
+                <h3>Compra de tokens ChernoFortune</h3>
                 <form onSubmit={(event) =>{
                   event.preventDefault();
                   const cantidad = this._numTokens.value;
@@ -252,7 +256,7 @@ class Tokens extends Component {
                 }}>
                   <input type='number' 
                   className='form-control mb-1' 
-                  placeholder='Cantidad de RicuibCoins a Comprar' 
+                  placeholder='Cantidad de ChernoFortune a Comprar' 
                   ref={(input)=> this._numTokens = input}/>
                   <input type='submit' 
                   className='bbtn btn-block btn-primary btn-sm' 
@@ -267,7 +271,7 @@ class Tokens extends Component {
                 }}>
                   <input type='number' 
                   className='form-control mb-1' 
-                  placeholder='Cantidad de RicuibCoins a Devolver' 
+                  placeholder='Cantidad de ChernoFortune a Devolver' 
                   ref={(input)=> this._numTokensDevolver = input}/>
                   <input type='submit' 
                   className='bbtn btn-block btn-warning btn-sm' 

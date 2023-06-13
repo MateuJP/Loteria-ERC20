@@ -15,20 +15,30 @@ contract loteria is ERC20, Ownable {
     address public nft;
 
     // Constructor 
-    constructor() ERC20("RicuibCoins", "RAM"){
+    constructor() ERC20("ChernoFortune", "CFORT"){
         _mint(address(this), 100000);
         nft = address(new mainERC721());
     }
 
     // Ganador del premio de la loteria
     address public ganador;
+    uint private  priceToken = 1 ether;
 
     // Registro del usuario
     mapping(address => address) public usuario_contract;
 
+
+    // Función para modificar el precio del Token
+    function modifyPrice(uint _newPrice) public onlyOwner {
+        priceToken=_newPrice;
+    }
+    function verPrecio() public view returns(uint){
+        return priceToken;
+    }
+
     // Precio de los tokens ERC-20
-    function precioTokens(uint256 _numTokens) internal pure returns (uint256){
-        return _numTokens * (1 ether);
+    function precioTokens(uint256 _numTokens) public view returns (uint256){
+        return _numTokens * (priceToken);
     }
 
     // Visualizacion del balance de tokens ERC-20 de un usuario
@@ -43,7 +53,7 @@ contract loteria is ERC20, Ownable {
 
     // Visualizacion del balance de ethers del Smart Contract
     function balanceEthersSC() public view returns (uint256){
-        return address(this).balance / 10**18;
+        return address(this).balance;
     }
 
     // Generacion de nuevos Tokens ERC-20
@@ -100,16 +110,25 @@ contract loteria is ERC20, Ownable {
     // Gestion de la loteria
     // ============================================
 
+    struct Boleto{
+        uint256 numero;
+        bool played;
+    }
+
     // Precio del boleto de loteria (en tokens ERC-20)
-    uint public precioBoleto = 5;
+    uint public precioBoleto = 1;
     // Relacion: persona que compra los boletos -> el numero de los boletos
-    mapping(address => uint []) idPersona_boletos;
+    //mapping(address => uint []) idPersona_boletos;
+
+    mapping(address => Boleto[]) idPersona_boletos;
     // Relacion: boleto -> ganador
     mapping(uint => address) ADNBoleto;
     // Numero aleatorio
     uint randNonce = 0;
     // Boletos de la loteria generadors
     uint [] boletosComprados;
+    // Registro de todos los usuarios Activos
+    address[] public activeAccounts;
 
     // Compra de boletos de loteria
     function compraBoleto(uint _numBoletos) public {
@@ -130,7 +149,8 @@ contract loteria is ERC20, Ownable {
             uint random = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % 10000;
             randNonce++;
             // Almacenamiento de los datos del boletos enlazados al usuario
-            idPersona_boletos[msg.sender].push(random);
+            //idPersona_boletos[msg.sender].push(random);
+            idPersona_boletos[msg.sender].push(Boleto(random,false));
             // Almacenamiento de los datos de los boletos
             boletosComprados.push(random);
             // Asignacion del ADN del boleto para la generacion de un ganador
@@ -138,12 +158,48 @@ contract loteria is ERC20, Ownable {
             // Creacion de un nuevo NFT para el numero de boleto
             boletosNFTs(usuario_contract[msg.sender]).mintBoleto(msg.sender, random);
         }
+        if(!isPlaying(msg.sender)){
+            activeAccounts.push(msg.sender);
+        }
     }
 
-    // Visualizacion de los boletos del usuario
-    function tusBoletos(address _propietario) public view returns(uint [] memory){
-        return idPersona_boletos[_propietario];
+    function isPlaying(address acount) internal view returns(bool){
+        for (uint256 i = 0; i < activeAccounts.length; i++) {
+            if (activeAccounts[i] == acount) {
+                return true; // La dirección se encuentra en el array
+            }
+        }
+        return false; // La dirección no se encuentra en el array
     }
+    
+   
+
+    // Visualizacion de los boletos del usuario,que aun no han sido jugados
+  function tusBoletos(address _propietario) public view returns (uint[] memory) {
+    Boleto[] memory boletosAux = idPersona_boletos[_propietario];
+    uint256 count = 0;
+
+    // Contar la cantidad de boletos no jugados
+    for (uint256 i = 0; i < boletosAux.length; i++) {
+        if (!boletosAux[i].played) {
+            count++;
+        }
+    }
+
+    // Inicializar el array con la longitud adecuada
+    uint[] memory boletosNoJugados = new uint[](count);
+
+    // Asignar los valores de los boletos no jugados
+    uint256 j = 0;
+    for (uint256 i = 0; i < boletosAux.length; i++) {
+        if (!boletosAux[i].played) {
+            boletosNoJugados[j] = boletosAux[i].numero;
+            j++;
+        }
+    }
+
+    return boletosNoJugados;
+}
 
     // Generacion del ganador de la loteria
     function generarGanador() public onlyOwner {
@@ -161,6 +217,24 @@ contract loteria is ERC20, Ownable {
         payable(ganador).transfer(address(this).balance * 95 / 100);
         // Envio del 5% del premio de loteria al owner
         payable(owner()).transfer(address(this).balance * 5 / 100);
+        
+        // Poner como played Todos los boletos jugados
+        for (uint256 i = 0; i < activeAccounts.length; i++) {
+            address aux = activeAccounts[i];
+            Boleto[] storage boletosAux = idPersona_boletos[aux];
+    
+            for (uint256 j = 0; j < boletosAux.length; j++) {
+                if (!boletosAux[j].played) {
+                    boletosAux[j].played = true;
+                }
+            }
+        }
+        activeAccounts = new address[](0);
+        boletosComprados=new uint[](0);
+
+    }
+    function setPrecioBoleto (uint _newPrice) public onlyOwner {
+        precioBoleto=_newPrice;
     }
 
 }
