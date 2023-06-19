@@ -1,61 +1,65 @@
 .cronometro-container {
-    text-align: center;
-    padding: 20px;
-    /*background-color: rgb(255, 224, 102);*/
-    background-color: darken(whitesmoke,10);
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Evitar que el contenido desborde */
-  }
-  h1{
-    margin-top: 5rem;
-  }
-  .countdown {
-    display: inline-block;
-    justify-content: center;
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .countdownContainer {
-    margin-top: 1rem; /* Ajusta la separación superior */
-  }
-  
-  .time-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .unit {
-    margin: 0 10px;
-    text-align: center;
-  }
+  text-align: center;
+  padding: 20px;
+  background-color: rgb(255, 224, 102);
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Evitar que el contenido desborde */
+}
+
+h2 {
+  margin-top: 5rem;
+  font-size: 30px;
+  color: #ffffff; /* Cambia el color del título a blanco */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Agrega un efecto de sombra al texto */
+}
+
+.countdown {
+  display: inline-block;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.countdownContainer {
+  margin-top: 1rem; /* Ajusta la separación superior */
+}
+
+.time-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unit {
+  margin: 0 10px;
+  text-align: center;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff0000; /* Cambia el color del número a rojo */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Agrega un efecto de sombra al número */
+}
+
+.label {
+  font-size: 18px;
+  color: #888;
+  margin-top: 5px;
+}
+
+@media (max-width: 576px) {
   .value {
-    font-size: 48px;
-    font-weight: bold;
+    font-size: 36px;
   }
-  
+
   .label {
-    font-size: 18px;
-    color: #888;
-    margin-top: 5px;
+    font-size: 14px;
   }
-  
-  
-  
-  @media (max-width: 576px) {
-    .value {
-      font-size: 36px;
-    }
-  
-    .label {
-      font-size: 14px;
-    }
-  
-    .separator {
-      font-size: 36px;
-    }
+
+  .separator {
+    font-size: 36px;
   }
-  
+}

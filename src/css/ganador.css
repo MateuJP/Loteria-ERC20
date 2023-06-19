@@ -1,0 +1,31 @@
+
+  
+  #ganador-container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffcc00;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 480px;
+    margin: 0 auto;
+    margin-top: 100px;
+    text-align: center;
+  }
+  
+  .ganador-title {
+    font-size: 32px;
+    margin: 0;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .ganador-amount {
+    font-size: 20px;
+    color: black;
+    margin-top: 20px;
+  }
+  
+  
+  

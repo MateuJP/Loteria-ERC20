@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import smart_contract from '../abis/loteria.json';
 import Web3, { eth } from 'web3';
-import '../css/ganador.css'
-class Ganador extends Component {
+import '../css/boletos.css'
+import Navigation from './Navbar';
+import MyCarousel from './Carousel';
+class Boletos extends Component {
 
   async componentDidMount() {
     // 1. Carga de Web3
@@ -43,13 +45,13 @@ class Ganador extends Component {
       const address = networkData.address
       console.log('address:', address)
       const contract = new web3.eth.Contract(abi, address)
-      console.log(contract);
-      if(contract){
+      if (contract) {
         this.setState({ contract })
-        const _ganador=await contract.methods.ganador().call();
-
-        this.setState({ganador: _ganador})
-        this.setState({loading : false})
+        console.log("Visualización de tus boletos en ejecución");
+        const _bloetos = await contract.methods.tusBoletos(this.state.account).call();
+        console.log(_bloetos);
+        this.setState({ boletos: _bloetos });
+        this.setState({ loading: false });
 
 
       }
@@ -65,28 +67,44 @@ class Ganador extends Component {
       loading: true,
       contract: null,
       errorMessage: "",
-      ganador: '0x0'
+      boletos: []
     }
   }
 
+
+
   render() {
-    const { ganador, loading } = this.state;
+    const { loading, boletos } = this.state;
+
+    if (loading) {
+      return <div>Cargando...</div>; // Muestra un mensaje de carga mientras se obtienen los boletos
+    }
+
     return (
       <div>
-        {loading ? (
-          <p>Cargando...</p>
-        ) : (
-          <div id="ganador-container">
-            <h2 className="ganador-title">¡Enhorabuena!</h2>
-            <div className="ganador-amount">
-              <p>{ganador}</p>
-            </div>
-           
+        <Navigation account={this.state.account} />
+        <div className='body-boletos'>
+          <h1 className="title">Tus Boletos</h1>
+          <div className="boletos-container">
+            {boletos.length > 0 ? (
+              boletos.map((boleto, index) => (
+                <div key={index} className="boleto">
+                  <div className="numero">{boleto.toString()}</div>
+                </div>
+              ))
+            ) : (
+              <div>No se encontraron boletos</div>
+            )}
           </div>
-        )}
+
+        </div>
+
       </div>
     );
   }
+
+
 }
 
-export default Ganador;
+
+export default Boletos;

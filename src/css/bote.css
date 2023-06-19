@@ -1,0 +1,48 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+#bote-container {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffcc00;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.bote-title {
+  font-size: 32px;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bote-amount {
+  font-size: 24px;
+  color: black;
+  margin-top: 20px;
+}
+
+.check-balance-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffcc00;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.check-balance-button:hover {
+  background-color: #ffcc00;
+  color: #ffffff;
+}

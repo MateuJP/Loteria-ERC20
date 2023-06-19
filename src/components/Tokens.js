@@ -4,6 +4,7 @@ import Web3, { eth } from 'web3';
 import Swal from 'sweetalert2';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Footer from './Footer';
 
 
 import Navigation from './Navbar';
@@ -51,7 +52,17 @@ class Tokens extends Component {
       const address = networkData.address
       console.log('address:', address)
       const contract = new web3.eth.Contract(abi, address)
-      this.setState({ contract })
+      if(contract){
+        this.setState({loading : true})
+        this.setState({ contract })
+        this.setState({addressToken : address.toString()});
+        const addresNFT = await contract.methods.nft().call();
+        this.setState({addressNFT : addresNFT.toString()});
+        this.setState({loading : false})
+
+        
+
+      }
     } else {
       window.alert('¡El Smart Contract no se ha desplegado en la red!')
     }
@@ -62,7 +73,9 @@ class Tokens extends Component {
       account: '0x0',
       loading: true,
       contract :null,
-      errorMessage : ""
+      errorMessage : "",
+      addressToken : '0x0',
+      addressNFT : '0x0'
     }
   }
 
@@ -116,16 +129,16 @@ class Tokens extends Component {
     }
   }
 
-  _balanceEthersSC=async()=>{
+  _precioTokens=async()=>{
     try{
+      console.log('Calculando Precio de los Tokens ...');
+
       const BigNumber = require('bignumber.js');
-      console.log('Balance de Ethers Smart Contract en ejecucion');
-      const _balanceEthersSC=await this.state.contract.methods.balanceEthersSC().call();
-      console.log(`El SC tienen ${_balanceEthersSC} Ethers`)
-      let ethers = new BigNumber(_balanceEthersSC).div(10 ** 18);
+      const _precio=await this.state.contract.methods.verPrecio().call();
+      let ethers = new BigNumber(_precio).div(10 ** 18);
       Swal.fire({
         icon: 'info',
-        title: 'Balance de ethers del smart contract : ',
+        title: 'Precio de ChernoFortune : ',
         width: 800,
         padding : '3em',
         text: `${ethers} ethers`,
@@ -203,7 +216,11 @@ class Tokens extends Component {
   }
 
   render() {
+    if (this.state.loading) {
+      return <div>Cargando...</div>;
+    }else{
     return (
+    
       <div>
         <Navigation account={this.state.account} />
         <MyCarousel />
@@ -212,43 +229,9 @@ class Tokens extends Component {
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
                 <h1>Gestión de los Tokens ERC-20</h1>
+            
                 &nbsp;
-                <Container>
-                  <Row>
-                    <Col>
-                    <h3>Mis tokens</h3>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._balanceTokens();
-                    }}>
-                      <input type='submit'
-                      className='bbtn btn-block btn-success btn-sm'
-                      value="BALANCE DE TOKENS"/>                    
-                    </form>
-                    </Col>                    
-                    <Col>
-                    <h3>Tokens SC</h3>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._balanceTokensSC();
-                    }}>
-                      <input type='submit' className='bbtn btn-block btn-info btn-sm' value="Balance Tokens SC"/>
-                    </form>
-                    </Col>
-
-                    <Col>
-                    <h3>Ethers SC</h3>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._balanceEthersSC();
-                    }}>
-                      <input type='submit' className='bbtn btn-block btn-danger btn-sm' value="Balance Ethers SC"/>
-                    </form>
-                    </Col>
-                  </Row>
-                </Container>
-                &nbsp;
-                <h3>Compra de tokens ChernoFortune</h3>
+                <h3>Compra de ChernoFortune</h3>
                 <form onSubmit={(event) =>{
                   event.preventDefault();
                   const cantidad = this._numTokens.value;
@@ -263,7 +246,7 @@ class Tokens extends Component {
                   value="Comprar Tokens"/>
                 </form>
                 &nbsp;
-                <h3> Devolución de Tokens ERC20</h3>
+                <h3> Devolución ChernoFortune</h3>
                 <form onSubmit={(event) =>{
                   event.preventDefault()
                   const cantidad = this._numTokensDevolver.value;
@@ -278,14 +261,51 @@ class Tokens extends Component {
                   value="Devolver Tokens"/>
                 
                 </form>
-                
+                &nbsp;
+                &nbsp;
+
+                <Container>
+                  <Row>
+                    <Col>
+                    <form onSubmit={(event)=>{
+                      event.preventDefault();
+                      this._balanceTokens();
+                    }}>
+                      <input type='submit'
+                      className='bbtn btn-block btn-success btn-sm'
+                      value="BALANCE DE TOKENS"/>                    
+                    </form>
+                    </Col>                    
+                    <Col>
+                    <form onSubmit={(event)=>{
+                      event.preventDefault();
+                      this._balanceTokensSC();
+                    }}>
+                      <input type='submit' className='bbtn btn-block btn-info btn-sm' value="Balance Tokens SC"/>
+                    </form>
+                    </Col>
+
+                    <Col>
+                    <form onSubmit={(event)=>{
+                      event.preventDefault();
+                      this._precioTokens();
+                    }}>
+                      <input type='submit' className='bbtn btn-block btn-danger btn-sm' value="Precio ChernoFortune "/>
+                    </form>
+                    </Col>
+                  </Row>
+                </Container>
               </div>
             </main>
           </div>
         </div>
+          <Footer nftaddress = {this.state.addressNFT} tokenaddress={this.state.addressToken} />
+
       </div>
+      
     );
   }
+}
 }
 
 export default Tokens;

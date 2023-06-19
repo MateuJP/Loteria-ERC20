@@ -2,11 +2,11 @@ const Loteria = artifacts.require('loteria');
 const axios = require('axios');
 const web3= require('web3');
 module.exports = async function(callBack) {
-    const precioEuros=0.5; // 5€
+    const precioEuros=5; // 5€
     const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur');
     const valorEtherEnEuros = response.data.ethereum.eur;
     console.log(`El Precio del Ether es ${valorEtherEnEuros}`);
-    const cantidadEther = precioEuros / valorEtherEnEuros;
+    const cantidadEther = (precioEuros / valorEtherEnEuros).toFixed(18);
     const loteria = await Loteria.deployed();
 
   // Convertir la cantidad de ether a wei

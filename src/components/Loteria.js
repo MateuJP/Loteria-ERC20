@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import smart_contract from '../abis/loteria.json';
 import Web3, { eth } from 'web3';
 import Swal from 'sweetalert2';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
+import '../css/loteria.css'
 import Navigation from './Navbar';
 import MyCarousel from './Carousel';
-import { Container } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
+import Footer from './Footer';
 
 class Loteria extends Component {
 
@@ -51,6 +50,9 @@ class Loteria extends Component {
       console.log('address:', address)
       const contract = new web3.eth.Contract(abi, address)
       this.setState({ contract })
+      this.setState({addressToken : address.toString()});
+      const addresNFT = await contract.methods.nft().call();
+      this.setState({addressNFT : addresNFT.toString()});
     } else {
       window.alert('¡El Smart Contract no se ha desplegado en la red!')
     }
@@ -62,7 +64,9 @@ class Loteria extends Component {
       account: '0x0',
       loading: true,
       contract: null,
-      errorMessage: ""
+      errorMessage: "",
+      addressToken : '0x0',
+      addressNFT : '0x0'
     }
   }
 
@@ -139,76 +143,60 @@ class Loteria extends Component {
     }
   }
 
-
   render() {
     return (
       <div>
         <Navigation account={this.state.account} />
         <MyCarousel />
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-
+        <div id="bodyLotery" className="container-fluid mt-5">
+       
+              <div id="contenedorBody"className="content mr-auto ml-auto">
                 <h1>Gestión de la Loteria con ERC-20 y ERC-721</h1>
-
-                <h3>Compra de boletos</h3>
-                <form onSubmit={(event) => {
-                  event.preventDefault();
-                  const cantidad = this._numBoletos.value;
-                  this._compraBoletos(cantidad);
-                }}>
-                  <input type='number'
-                    className='form-control mb1'
-                    placeholder='Cantidad de bolteos a comprar'
-                    ref={(input) => this._numBoletos = input} />
-                  &nbsp;
-                  <input type='submit'
-                    className='bbtn btn-block btn-primary btn-sm'
-                    value="Comprar Boletos" />
-
-                </form>
-                &nbsp;
-                <Container>
-                  <Row>
-                    <Col>
-                      <h3>Precio Boleto </h3>
-                      <form onSubmit={(event) => {
-                        event.preventDefault()
-                        this._precioBoleto();
-                      }}>
-                        &nbsp;
-                        <input type='submit'
-                          className='bbtn btn-block btn-danger btn-sm'
-                          value="Precio Boletos" />
-
-                      </form>
-                    </Col>
-
-                    <Col>
-                      <h3>Tus Boletos</h3>
-                      <form onSubmit={(event) => {
-                        event.preventDefault()
-                        this._tusBoletos();
-                      }}>
-                        &nbsp;
-                        <input type='submit'
-                          className='bbtn btn-block btn-warning btn-sm'
-                          value="Ver mis boletos" />
-
-                      </form>
-                    </Col>
-                  </Row>
-                </Container>
-
-
+                <div className="loteria-container">
+                  <div className="form-container">
+                    <h3>Compra tus boletos</h3>
+                    <form onSubmit={(event) => {
+                      event.preventDefault();
+                      const cantidad = this._numBoletos.value;
+                      this._compraBoletos(cantidad);
+                    }}>
+                      <input
+                        type="number"
+                        className="form-control mb1"
+                        placeholder="Cantidad de boletos a comprar"
+                        ref={(input) => (this._numBoletos = input)}
+                      />
+                      <input
+                        type="submit"
+                        className="btn btn-block btn-primary btn-sm"
+                        value="Comprar Boletos"
+                      />
+                    </form>
+                  </div>
+                  <div className="buttons-container">
+                    <div>
+                      <button className="btn btn-block btn-danger btn-sm" onClick={this._precioBoleto}>
+                        Ver Precio del Boleto
+                      </button>
+                    </div>
+                    <div>
+                      <Link to='/misBoletos'>
+                        <button className="btn btn-block btn-success btn-sm">
+                          Ver Mis Boletos
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </main>
-          </div>
+           
         </div>
+        <Footer nftaddress = {this.state.addressNFT} tokenaddress={this.state.addressToken} />
+
       </div>
     );
   }
+  
 }
 
 export default Loteria;

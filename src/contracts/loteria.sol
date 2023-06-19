@@ -55,6 +55,11 @@ contract loteria is ERC20, Ownable {
     function balanceEthersSC() public view returns (uint256){
         return address(this).balance;
     }
+    function boteEtherSC() public view returns(uint256){
+        uint256 num_participantes = boletosComprados.length;
+        uint256 bote= num_participantes*precioBoleto;
+        return bote * priceToken;
+    }
 
     // Generacion de nuevos Tokens ERC-20
     function mint(uint256 _cantidad) public onlyOwner {
@@ -163,6 +168,10 @@ contract loteria is ERC20, Ownable {
         }
     }
 
+    function numBoletosUser(address acount) public view returns(uint256){
+        return idPersona_boletos[acount].length;
+    }
+
     function isPlaying(address acount) internal view returns(bool){
         for (uint256 i = 0; i < activeAccounts.length; i++) {
             if (activeAccounts[i] == acount) {
@@ -201,7 +210,7 @@ contract loteria is ERC20, Ownable {
     return boletosNoJugados;
 }
 
-    // Generacion del ganador de la loteria
+     // Generacion del ganador de la loteria
     function generarGanador() public onlyOwner {
         // Declaracion de la longitud del array
         uint longitud = boletosComprados.length;
@@ -213,10 +222,12 @@ contract loteria is ERC20, Ownable {
         uint eleccion = boletosComprados[random];
         // Direccion del ganador de la loteria
         ganador = ADNBoleto[eleccion];
+        // Caluclamos el Bote
+        uint256 bote=boteEtherSC();
         // Envio del 95% del premio de loteria al ganador
-        payable(ganador).transfer(address(this).balance * 95 / 100);
+        payable(ganador).transfer(bote * 95 / 100);
         // Envio del 5% del premio de loteria al owner
-        payable(owner()).transfer(address(this).balance * 5 / 100);
+        payable(owner()).transfer(bote * 5 / 100);
         
         // Poner como played Todos los boletos jugados
         for (uint256 i = 0; i < activeAccounts.length; i++) {

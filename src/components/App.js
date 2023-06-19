@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Tokens from './Tokens';
-import Footer from './Footer';
 import Loteria from './Loteria';
-import Ganador from './Ganador';
+import Boletos from './Boletos';
+import '../css/main.css'
 
 class App extends Component {
     
@@ -16,12 +16,12 @@ class App extends Component {
                         <Routes>
                             <Route path="/" element={<Tokens />} />
                             <Route path="/loteria" element={<Loteria />} />
-                            <Route path="/ganador" element={<Ganador />} />
+                            <Route path="/misBoletos" element={<Boletos />} />
+
 
 
                         </Routes>
                     </div>
-                    <Footer />
                 </div>
             </BrowserRouter>
         );
