@@ -44,15 +44,16 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-    },   
-      // Polygon testent (MATIC)
-      polygon: {
-        provider : ()=> new HDWalletProvider(mnemonic,'https://rpc-mumbai.maticvigil.com/v1/648778192d331a8edea7adbdc213ada9f6fe129a'),
-        network_id: 80001,
-        confirmations: 1,
-        timeoutBlocks: 200,
-        skipDryRun: true
-      },
+    },
+
+    // Polygon testent (MATIC)
+    //polygon: {
+    //  provider : ()=> new HDWalletProvider(mnemonic,'https://rpc-mumbai.maticvigil.com/v1/648778192d331a8edea7adbdc213ada9f6fe129a'),
+    //  network_id: 80001,
+    //  confirmations: 1,
+    //  timeoutBlocks: 200,
+    //  skipDryRun: true
+    //},
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port

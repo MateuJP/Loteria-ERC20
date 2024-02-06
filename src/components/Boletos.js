@@ -52,8 +52,6 @@ class Boletos extends Component {
         console.log(_bloetos);
         this.setState({ boletos: _bloetos });
         this.setState({ loading: false });
-
-
       }
     } else {
       window.alert('¡El Smart Contract no se ha desplegado en la red!')
@@ -102,9 +100,5 @@ class Boletos extends Component {
       </div>
     );
   }
-
-
 }
-
-
 export default Boletos;

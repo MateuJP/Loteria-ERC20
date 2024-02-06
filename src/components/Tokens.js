@@ -41,7 +41,7 @@ class Tokens extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
     // Ganache -> 5777, Rinkeby -> 4, BSC -> 97
-    const networkId = await web3.eth.net.getId() 
+    const networkId = await web3.eth.net.getId()
     console.log('networkid:', networkId)
     const networkData = smart_contract.networks[networkId]
     console.log('NetworkData:', networkData)
@@ -52,16 +52,13 @@ class Tokens extends Component {
       const address = networkData.address
       console.log('address:', address)
       const contract = new web3.eth.Contract(abi, address)
-      if(contract){
-        this.setState({loading : true})
+      if (contract) {
+        this.setState({ loading: true })
         this.setState({ contract })
-        this.setState({addressToken : address.toString()});
+        this.setState({ addressToken: address.toString() });
         const addresNFT = await contract.methods.nft().call();
-        this.setState({addressNFT : addresNFT.toString()});
-        this.setState({loading : false})
-
-        
-
+        this.setState({ addressNFT: addresNFT.toString() });
+        this.setState({ loading: false })
       }
     } else {
       window.alert('¡El Smart Contract no se ha desplegado en la red!')
@@ -72,15 +69,15 @@ class Tokens extends Component {
     this.state = {
       account: '0x0',
       loading: true,
-      contract :null,
-      errorMessage : "",
-      addressToken : '0x0',
-      addressNFT : '0x0'
+      contract: null,
+      errorMessage: "",
+      addressToken: '0x0',
+      addressNFT: '0x0'
     }
   }
 
-  _balanceTokens=async()=>{
-    try{
+  _balanceTokens = async () => {
+    try {
       console.log("Balance de tokens en ejecución");
       const _balance = await this.state.contract.methods.balanceTokens(this.state.account).call();
 
@@ -88,92 +85,92 @@ class Tokens extends Component {
         icon: 'info',
         title: 'Balance de tokens del usuario : ',
         width: 800,
-        padding : '3em',
+        padding: '3em',
         text: `${_balance} tokens`,
-        backdrop : `
+        backdrop: `
           rgba(15,238,168,0.2)
           left top
           no-repeat
         `
       });
 
-    }catch(err){
-      this.setState({errorMessage : err});
-    }finally{
-      this.setState({loading:false});
+    } catch (err) {
+      this.setState({ errorMessage: err });
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
-  _balanceTokensSC=async()=>{
-    try{
+  _balanceTokensSC = async () => {
+    try {
       console.log('Balance Tokens Smart Contract en ejecucion');
-      const _balanceTokensSC=await this.state.contract.methods.balanceTokensSC().call();
+      const _balanceTokensSC = await this.state.contract.methods.balanceTokensSC().call();
 
       Swal.fire({
         icon: 'info',
         title: 'Balance de tokens del smart contract : ',
         width: 800,
-        padding : '3em',
+        padding: '3em',
         text: `${_balanceTokensSC} tokens`,
-        backdrop : `
+        backdrop: `
           rgba(15,238,168,0.2)
           left top
           no-repeat
         `
       });
 
-    }catch(err){
-      this.setState({errorMessage : err})
-    }finally{
-      this.setState({loading:false})
+    } catch (err) {
+      this.setState({ errorMessage: err })
+    } finally {
+      this.setState({ loading: false })
     }
   }
 
-  _precioTokens=async()=>{
-    try{
+  _precioTokens = async () => {
+    try {
       console.log('Calculando Precio de los Tokens ...');
 
       const BigNumber = require('bignumber.js');
-      const _precio=await this.state.contract.methods.verPrecio().call();
+      const _precio = await this.state.contract.methods.verPrecio().call();
       let ethers = new BigNumber(_precio).div(10 ** 18);
       Swal.fire({
         icon: 'info',
         title: 'Precio de ChernoFortune : ',
         width: 800,
-        padding : '3em',
+        padding: '3em',
         text: `${ethers} ethers`,
-        backdrop : `
+        backdrop: `
           rgba(15,238,168,0.2)
           left top
           no-repeat
         `
       });
 
-    }catch(err){
-      this.setState({errorMessage : err})
-    }finally{
-      this.setState({loading:false})
+    } catch (err) {
+      this.setState({ errorMessage: err })
+    } finally {
+      this.setState({ loading: false })
     }
   }
 
-  _compraTokens=async( _numTokens) => {
-    try{
+  _compraTokens = async (_numTokens) => {
+    try {
       const web3 = window.web3
       console.log("Compra de Tokens en ejecución");
       const ethers = await this.state.contract.methods.precioTokens(_numTokens).call();
-      const precioFinal=web3.utils.fromWei(ethers, 'wei');
+      const precioFinal = web3.utils.fromWei(ethers, 'wei');
       console.log(`El precio es ${ethers} ethers`);
       await this.state.contract.methods.compraTokens(_numTokens).send({
-        from : this.state.account,
-        value : precioFinal
+        from: this.state.account,
+        value: precioFinal
       })
       Swal.fire({
         icon: 'success',
         title: 'Compra de Tokens ChernoFortune realizada',
         width: 800,
-        padding : '3em',
-        text: `Has Comprado ${_numTokens} ChernoFortune/s por un valor de ${ethers / 10**18} ether/s`,
-        backdrop : `
+        padding: '3em',
+        text: `Has Comprado ${_numTokens} ChernoFortune/s por un valor de ${ethers / 10 ** 18} ether/s`,
+        backdrop: `
           rgba(15,238,168,0.2)
           left top
           no-repeat
@@ -181,25 +178,26 @@ class Tokens extends Component {
       });
 
 
-    }catch(err){
-      this.setState({errorMessage : err});
-    }finally{
-      this.setState({loading:false})
+    } catch (err) {
+      this.setState({ errorMessage: err });
+    } finally {
+      this.setState({ loading: false })
     }
   }
 
-  _devolverTokens = async(_numTokens) =>{
-    try{
+  _devolverTokens = async (_numTokens) => {
+    try {
       console.log("Compra de Tokens en ejecución");
       await this.state.contract.methods.devolverTokens(_numTokens).send({
-        from : this.state.account})
+        from: this.state.account
+      })
       Swal.fire({
         icon: 'success',
         title: '¡Devolución de ChernoFortune realizada!',
         width: 800,
-        padding : '3em',
+        padding: '3em',
         text: `Has devuelto ${_numTokens} ChernoFortune/s`,
-        backdrop : `
+        backdrop: `
           rgba(15,238,168,0.2)
           left top
           no-repeat
@@ -207,10 +205,10 @@ class Tokens extends Component {
       });
 
 
-    }catch(err){
-      this.setState({errorMessage : err});
-    }finally{
-      this.setState({loading:false})
+    } catch (err) {
+      this.setState({ errorMessage: err });
+    } finally {
+      this.setState({ loading: false })
     }
 
   }
@@ -218,94 +216,94 @@ class Tokens extends Component {
   render() {
     if (this.state.loading) {
       return <div>Cargando...</div>;
-    }else{
-    return (
-    
-      <div>
-        <Navigation account={this.state.account} />
-        <MyCarousel />
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-                <h1>Gestión de los Tokens ERC-20</h1>
-            
-                &nbsp;
-                <h3>Compra de ChernoFortune</h3>
-                <form onSubmit={(event) =>{
-                  event.preventDefault();
-                  const cantidad = this._numTokens.value;
-                  this._compraTokens(cantidad);
-                }}>
-                  <input type='number' 
-                  className='form-control mb-1' 
-                  placeholder='Cantidad de ChernoFortune a Comprar' 
-                  ref={(input)=> this._numTokens = input}/>
-                  <input type='submit' 
-                  className='bbtn btn-block btn-primary btn-sm' 
-                  value="Comprar Tokens"/>
-                </form>
-                &nbsp;
-                <h3> Devolución ChernoFortune</h3>
-                <form onSubmit={(event) =>{
-                  event.preventDefault()
-                  const cantidad = this._numTokensDevolver.value;
-                  this._devolverTokens(cantidad);
-                }}>
-                  <input type='number' 
-                  className='form-control mb-1' 
-                  placeholder='Cantidad de ChernoFortune a Devolver' 
-                  ref={(input)=> this._numTokensDevolver = input}/>
-                  <input type='submit' 
-                  className='bbtn btn-block btn-warning btn-sm' 
-                  value="Devolver Tokens"/>
-                
-                </form>
-                &nbsp;
-                &nbsp;
+    } else {
+      return (
 
-                <Container>
-                  <Row>
-                    <Col>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._balanceTokens();
-                    }}>
-                      <input type='submit'
-                      className='bbtn btn-block btn-success btn-sm'
-                      value="BALANCE DE TOKENS"/>                    
-                    </form>
-                    </Col>                    
-                    <Col>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._balanceTokensSC();
-                    }}>
-                      <input type='submit' className='bbtn btn-block btn-info btn-sm' value="Balance Tokens SC"/>
-                    </form>
-                    </Col>
+        <div>
+          <Navigation account={this.state.account} />
+          <MyCarousel />
+          <div className="container-fluid mt-5">
+            <div className="row">
+              <main role="main" className="col-lg-12 d-flex text-center">
+                <div className="content mr-auto ml-auto">
+                  <h1>Gestión de los Tokens ERC-20</h1>
 
-                    <Col>
-                    <form onSubmit={(event)=>{
-                      event.preventDefault();
-                      this._precioTokens();
-                    }}>
-                      <input type='submit' className='bbtn btn-block btn-danger btn-sm' value="Precio ChernoFortune "/>
-                    </form>
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
-            </main>
+                  &nbsp;
+                  <h3>Compra de ChernoFortune</h3>
+                  <form onSubmit={(event) => {
+                    event.preventDefault();
+                    const cantidad = this._numTokens.value;
+                    this._compraTokens(cantidad);
+                  }}>
+                    <input type='number'
+                      className='form-control mb-1'
+                      placeholder='Cantidad de ChernoFortune a Comprar'
+                      ref={(input) => this._numTokens = input} />
+                    <input type='submit'
+                      className='bbtn btn-block btn-primary btn-sm'
+                      value="Comprar Tokens" />
+                  </form>
+                  &nbsp;
+                  <h3> Devolución ChernoFortune</h3>
+                  <form onSubmit={(event) => {
+                    event.preventDefault()
+                    const cantidad = this._numTokensDevolver.value;
+                    this._devolverTokens(cantidad);
+                  }}>
+                    <input type='number'
+                      className='form-control mb-1'
+                      placeholder='Cantidad de ChernoFortune a Devolver'
+                      ref={(input) => this._numTokensDevolver = input} />
+                    <input type='submit'
+                      className='bbtn btn-block btn-warning btn-sm'
+                      value="Devolver Tokens" />
+
+                  </form>
+                  &nbsp;
+                  &nbsp;
+
+                  <Container>
+                    <Row>
+                      <Col>
+                        <form onSubmit={(event) => {
+                          event.preventDefault();
+                          this._balanceTokens();
+                        }}>
+                          <input type='submit'
+                            className='bbtn btn-block btn-success btn-sm'
+                            value="BALANCE DE TOKENS" />
+                        </form>
+                      </Col>
+                      <Col>
+                        <form onSubmit={(event) => {
+                          event.preventDefault();
+                          this._balanceTokensSC();
+                        }}>
+                          <input type='submit' className='bbtn btn-block btn-info btn-sm' value="Balance Tokens SC" />
+                        </form>
+                      </Col>
+
+                      <Col>
+                        <form onSubmit={(event) => {
+                          event.preventDefault();
+                          this._precioTokens();
+                        }}>
+                          <input type='submit' className='bbtn btn-block btn-danger btn-sm' value="Precio ChernoFortune " />
+                        </form>
+                      </Col>
+                    </Row>
+                  </Container>
+                </div>
+              </main>
+            </div>
           </div>
-        </div>
-          <Footer nftaddress = {this.state.addressNFT} tokenaddress={this.state.addressToken} />
+          <Footer nftaddress={this.state.addressNFT} tokenaddress={this.state.addressToken} />
 
-      </div>
-      
-    );
+        </div>
+
+      );
+    }
   }
-}
 }
 
 export default Tokens;
